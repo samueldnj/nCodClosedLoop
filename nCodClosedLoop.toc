@@ -1,0 +1,19 @@
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}
+\contentsline {section}{\numberline {2}Methods}{6}{section.2}
+\contentsline {subsection}{\numberline {2.1}Age-structured operating model}{7}{subsection.2.1}
+\contentsline {subsubsection}{\numberline {2.1.1}Population dynamics}{7}{subsubsection.2.1.1}
+\contentsline {subsubsection}{\numberline {2.1.2}Growth, recruitment, natural and fishing mortality, and maturity}{7}{subsubsection.2.1.2}
+\contentsline {subsubsection}{\numberline {2.1.3}Data generation from the operating model}{9}{subsubsection.2.1.3}
+\contentsline {subsubsection}{\numberline {2.1.4}Operating model projection scenarios}{9}{subsubsection.2.1.4}
+\contentsline {subsection}{\numberline {2.2}Management procedures}{10}{subsection.2.2}
+\contentsline {subsubsection}{\numberline {2.2.1}Simulated stock assessment data}{10}{subsubsection.2.2.1}
+\contentsline {subsubsection}{\numberline {2.2.2}Catch-at-age stock assessment models}{11}{subsubsection.2.2.2}
+\contentsline {subsubsection}{\numberline {2.2.3}Harvest control rule}{12}{subsubsection.2.2.3}
+\contentsline {subsubsection}{\numberline {2.2.4}Performance measures}{15}{subsubsection.2.2.4}
+\contentsline {section}{\numberline {3}Results}{15}{section.3}
+\contentsline {subsection}{\numberline {3.1}Simulation model dynamics}{15}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Evaluation of management procedures}{18}{subsection.3.2}
+\contentsline {section}{\numberline {4}Discussion}{20}{section.4}
+\contentsline {subsection}{\numberline {4.1}Limitations}{21}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Conclusion}{22}{subsection.4.2}
+\contentsline {section}{References}{22}{section*.2}

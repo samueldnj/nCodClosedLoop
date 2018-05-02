@@ -1,0 +1,225 @@
+---  
+title: "Evaluating a precautionary harvest strategy in the presence of uncertainty in natural mortality dynamics and structure."
+author:
+- name: Samuel D. N. Johnson
+  affil: Simon Fraser University
+  email: samuelj@sfu.ca
+- name: Ashleen J. Benson
+  affil: Simon Fraser University
+  email: ajbenson@sfu.ca
+- name: Sean P. Cox
+  affil: Simon Fraser University
+  email: spcox@sfu.ca
+date: \today
+bibliography: /Users/sdnjohnson/Dropbox/Library/library.bib
+geometry: letterpaper
+toc: true
+fontsize: 12pt
+lineno: true
+numbersections: true
+appendix: false
+abstract: Canada's 2J3KL northern cod stock is rebuilding from a severely depleted state. Recent stock assessments indicate that brief periods of extremely high natural mortality rates for adult cod can lead to stock collapse even in the presence of theoretically conservative fishing mortality rates (e.g., $F_{0.1}$). Future non-stationarity in natural mortality and recruitment rates of cod, as well as potential errors in assessment of stock abundance, should therefore be taken into account when evaluating future rebuilding strategies. This paper evaluates possible harvest strategies for Canada's 2J3KL northern cod fishery using a closed loop simulation framework. Our simulation framework models the northern cod fishery system closely, by conditioning on historical recruitment, natural mortality and growth rates estimated in the 2014 stock assessment. We include realistic assessment errors in our projections by simulating a statistical catch at age stock assessment model as part of the management procedure. Candidate harvest strategies are tested against 12 scenarios varying recruitment and mortality dynamics, including density dependent and independent natural mortality scenarios. We demonstrate that a harvest strategy using an equilibrium $F_{0.1}$ target harvest rate may not be sufficiently conservative in the presence of future mortality and recruitment uncertainty and non-stationarity, and that the demographic rates largely determine the time for rebuilding, not the choice of management procedure.
+---
+
+# Introduction
+
+Canada's northern cod stock (NAFO areas 2J3KL) appears to be rebuilding from a severely depleted historical state [@cadigan2015state]. The original collapse of this stock in the early 1990s was initially attributed to fishing; however, in hindsight, it appears that elevated natural mortality could have been a key contributing factor to the rapid decline in stock biomass over a short time. A return of natural mortality to levels observed prior to the collapse, combined with relatively strong recruitment, have led to sustained recent biomass growth. Continued biomass growth at this pace could potentially re-establish directed commercial cod fisheries in the near future. 
+
+Renewing the fishery for northern cod requires a harvest strategy designed to take into account recognised uncertainties in cod stock abundance and dynamics, as well as fishery economic preferences. Given the historical context, there is considerable need for diligence in thoroughly testing harvest strategies for weaknesses in the face of identified cod dynamics....
+
+  - political climate: should we mention the current inshore fisheries? need for economic stimulation in NFL and NS?
+  - This is where we should reference HCR papers, eg @punt2010harvest, @kvamsdal2016harvest, 
+  - stakeholder driven options: @cox2008practical
+  - Foreshadow the question here: HCRs are meant to balance the opposing needs of conservation and yield, and implement the PA in a rules-based paradigm
+
+Closed-loop computer simulations are currently the only practical way to test whether harvest strategy designs that appear precautionary in theory are actually likely to be precautionary in practice [@cox2011management; @wetzel2017performance]. Modern stock assessment models, regardless of complexity, are not capable of providing the information needed to design such harvest strategies [@smith1994management; @punt2016management]. This limitation is because stock assessment models do not adequately account for feedbacks between future management procedures (i.e., combinations of data, assessment, and harvest control rule) and performance measures related to stock biomass and fishery outcomes (e.g., yield, variability in yield, and risk).
+  
+  - Something about why 1 step ahead residuals are limited in use here - need to rank MPs, not predict the stock behaviour
+  - Descriptive vs. explanatory models? This probably just muddies the issue
+
+Stock assessment model errors and target fishing mortality rates are the main factors that interact to create both short-term and long-term weaknesses in fishery harvest strategies ***[citation needed]***. The limitations of fishery stock assessment models are reasonably well-understood – models that are based on high-quality data are generally good at estimating relative changes in abundance over time and sometimes abundance relative to reference points such as the unfished biomass; however, the models are also not always capable of providing unbiased estimates of the absolute fish stock biomass, mortality rates, or productivity. For output quota fisheries, including the northern cod fishery, biomass estimation biases from stock assessment models are translated directly into biases in short-term harvest quotas; that is, over-estimating biomass causes the actual fishing mortality rate on the stock to be greater than intended.
+
+If a fishery is managed using standard fishing mortality targets such as $F_{0.1}$ or $F_{MSY}$, then biomass estimation errors can propagate to substantially higher quotas than intended [**citation**]. Persistent biomass over-estimation during a stock decline may lead to a positive feedback because stock assessment model biases are usually worst when stock biomass is changing rapidly. Thus, stock assessment biases and relatively high target $F$ values can lead to long-term declines and, in some cases, collapses of important fish stocks despite considerable efforts put into data collection, stock assessment modelling, and theoretically conservative harvest control rules.
+
+This paper evaluates whether a precautionary harvest strategy for 2J3KL cod  is actually precautionary under time-varying demographic rates using a closed loop simulation framework. The key elements of the simulation framework attempt to closely mimic northern cod stock dynamics, stock assessment model performance, and management decision rules that aim to promote simultaneous rebuilding of both the stock and the fishery. Population dynamics in the historical period are matched to 2015 stock assessment outputs [@cadigan2015state], and the harvest strategy used in the projection is modeled on the standard precautionary harvest strategy recommended by the Department of Fisheries and Oceans, Canada [@DFO2006A-Harvest-Strat].
+
+# Methods
+
+Closed loop management strategy simulations for output quota fisheries require three main components: (i) an operating model to represent population dynamics of the stock, the mechanisms generating survey and age-composition data, and relationships between harvest decisions and fishing mortality on the stock; (ii) a management procedure consisting of monitoring data, stock assessment analyses, and harvest control rules for setting target fishing mortality and catch limits; and (iii) performance indicators for comparing simulated outcomes against fishery objectives. The following sections describe the models used for each of these components for our Northern Cod simulations.  
+
+**Is the following part really necessary? Shouldn't we just have a table of parameter definitions?**
+
+Our model notation attempts to maintain consistent conventions for state variables and parameters across both the operating model and stock assessment model, while also making clear the differences between operating model variables, equilibrium solutions, parameters estimated in stock assessment models, and variables derived from these parameter estimates. As a general rule, any parameter or variable (e.g., $B_0$) that does not show a ^ or $\sim$ symbol is part of the operating model. Variables without subscripts for time (e.g., $F_{MSY}, B_{MSY}, B_0$) are considered constant and usually represent equilibrium quantities. The symbol ^ over a variable indicates a parameter (e.g., $\hat{B}_0$ ) or variable estimated by the stock assessment model.  The combination of ^ and $\sim$ symbols and time subscripts (e.g., $\hat{\tilde{B}}_{t,MSY}$ ) indicates a quantity that is a function of estimated stock assessment model parameters while time subscripts (e.g., $T$) on parameters such as the one shown above indicate an estimate of that quantity given data up to the time step indicated. Vector objects are denoted using R-like notation such as $1:T$ in subscripts (e.g., $\hat{B}_{1:T}$ ).
+
+
+##  Age-structured operating model
+<!-- 
+###  Equilibrium characteristics and biological reference points
+
+***I'm not sure this section is necessary, we don't use biological RPs, but empirical***
+
+ If required, equilibrium biomass and fishing mortality reference points for the age-structured model (Table 4) can be derived from either the yield-per-recruit (EQ3.4) and spawning biomass-per-recruit functions (EQ3.5), which involve only life history and selectivity parameters, or the total recruitment (EQ3.6), biomass (EQ3.7), and yield (EQ3.8) relationships, which involve all life history, selectivity, and stock-recruitment parameters.  Operating model biological reference points BMSY and FMSY, and harvest control points  (defined below) derived from age-structured stock assessment model parameters are also computed using these functions if necessary.  Reference and control point proxies derived from yield-per-recruit (e.g., $F_{0.1}) or spawning potential ratios (e.g., $F_{40\%}$) are also computed using these equilibrium relationships, although none of these are implemented here for northern cod. -->
+
+###  Population dynamics
+Abundance dynamics were simulated via an age-structured model with $A = 14$ age classes, where the index $A$ represents a plus-group.  Notation, parameter settings, and equations for the operating model are given in Tables 1, 2, and 3, respectively. The total simulation time frame (1983-2035) is divided into an historical period, $t \leq T_1 - 1$, corresponding to 1983-2014, and a projection period, $T_1 \leq t \leq T_2$, corresponding to 2015-2035.  The operating model population is initialized in the deterministic, unfished equilibrium state at time t = 1 (corresponding to the year 1983). For northern cod, these initial equilibrium abundances are then modified by age-specific multipliers to re-scale abundances to non-equilibrium numbers-at-age taken from the 2015 NCAM stock assessment [@cadigan2015state]. State dynamics are then driven by stochastic growth, recruitment, and mortality processes.
+
+
+###  Growth, recruitment, natural and fishing mortality, and maturity
+We modelled size-at-age of cod by cohort using cohort-specific Ford-Walford growth parameters $(\alpha_t,\rho_t)$ estimated from the historical size-at-age data [citation needed]. These were estimated via ordinary linear regression of length-at-age $a$ on length-at-age $a-1$. The $(\alpha_t,\rho_t)$ values were highly correlated, so we modelled $\rho_t$ as a linear function of $\alpha_t$ (OM2.10) to ensure that simulated future growth parameters maintained a similar correlation to the empirical data ***We should probably show this relationship***. Equations OM2.11-2.13 show the sequence of calculations used to derive the annual weights-at-age. Length-weight conversion parameters $c_1 = 7.59 \cdot 10^{-5}$ and $c_2 = 3.06$ were obtained from [@froese2014bayesian]. 
+
+Recruitment to the population is assumed to occur in a single pulse at the beginning of the year. Annual age-1 recruitment values in the historical period are derived from the NCAM annual values of age-2 recruitment and the age-2 natural mortality rate estimated for 1983, assuming age-1 mortality for the historical period is identical to age-2 mortality, e.g. $R_t = N_{2,t+1} e^{M_2,t}$. Similarly, natural mortality rates for the historical period were fixed at age-/year-specific estimates from NCAM.
+
+Projections of the Walford growth parameter $\alpha_t$, recruitment and natural mortality are modelled as AR(1) processes in the operating model. Equation OM2.14, where the generic variable X represents one of these processes, gives the general formula. Autocorrelated deviations in the Walford growth intercept $\alpha_t$ have a standard deviation of $\sigma_\alpha=0.1$ and an autocorrelation coefficient of $\gamma_\alpha=0.2$. Recruitment deviations have a standard deviation $\sigma_R = 0.428$, to maintain consistency with variability in NCAM, and an autocorrelation coefficient of $\gamma_R=0.8$. Finally, natural mortality deviations have a standard deviation of $\sigma_M = 0.255$ and autocorrelation coefficient of $\gamma_M=0.534$, consistent with NCAM estimates. Simulated natural mortality and growth rates for the projection period were scaled such that values of the historical and projection periods match exactly at the end of the historical period ($t = T_1-1$). 
+
+[Revise the following paragraph]
+
+Equations OM2.17-2.20 gives the abundance-at-age, spawning biomass, and exploitable biomasses implied by the parameters and fishing mortality rates. The operating model assumes a single fishery with $F_{a,t}$  values derived from NCAM in the historical period. In the projection period, fully selected $F_t$ values are found as solutions to the catch equation (OM2.21) given annual output quotas from the management procedures, with selectivity functions derived from NCAM $F_{a,t}$ in the historical period. Fishing selectivity-at-age is time varying, which in the historical period is solved from NCAM fishing mortality-at-age estimates by scaling the maximum values to 1. Projected selectivity-at-age is resampled with replacement from the historical values using a time series bootstrap, which is similar to a traditional bootstrap with one important difference. Where a traditional bootstrap will sample single points of data with replaced, the time series bootstrap samples random length segments from the history in order to preserve any auto-correlation that may exist in those segments.
+
+Maturity-at-age is modeled parametrically, by cohort, using logistic functions (equation OM 2.2). In the historical period, cohort-specific age-at-maturity ogives for 50% and 95% mature are estimated from observations of the proportion mature at age in the RV survey. When projecting forward, ogives are resampled from the historical data using a time series bootstrap [**definition or citation**].
+
+###  Data generation from the operating model
+At each time step, the operating model generates a log-normally distributed survey biomass index with catchability coefficient (OM2.23) and vectors of observed age-proportions using both fishery and survey selectivity curves. The survey index standard error is assumed constant at $\tau_I = 0.3$. Age-composition is modelled using multivariate logistic distributions with independent errors (OM2.24-2.26) [@schnute1995influence]. Simulated ageing errors had a standard deviation of $\tau_P=0.2$.
+
+###  Operating model projection scenarios
+Cod production is highly sensitive to adult natural mortality rates (M) and age-1 recruitment. We defined 12 operating model scenarios based on combinations of four natural mortality and three recruitment assumptions in the projection period.
+
+The first natural mortality scenario (conM) is a stationary, zero-trend random walk ($\sigma_M = 0.255$) around the historical mean M value. This scenario provides a best-case benchmark. Other natural mortality scenarios assumed that historical natural mortality patterns resulted from the above random walk plus short-term pulses of extreme mortality, occurring at random with frequencies once every 40 years (pM40), once every 20 years (pM20), and a density-dependent pulse occuring every 20 years while spawning stock biomass is below $B_{lim}$ (pM20lim). A pulse magnitude of 650% of average was chosen to mimic the highest observed M event in the historical period. [**Should we reference a citation for density dependent mortality?**]
+
+[*Dial up recruitment to BH?? At least in projection period...*]
+
+The three recruitment scenarios assume that future average is (i) constant at the recent average recruitment from 2005 – 2014, which is 16% of the 1980s mean recruitment ($.16\bar{R}$), (ii) 50% of 1980s mean recruitment ($.5\bar{R}$), or (iii) an increasing trend from the recent average to half the 1980s average ($inc\bar{R}$).
+
+While this limited suite of scenarios is far from exhaustive, it suffices to demonstrate some of the challenges in developing management procedures in the presence of non-stationary population dynamics and in judging performance with respect to limit reference points and fishery objectives. 
+
+##  Management procedures
+Simulated management procedures (MPs) in the projection period consist of three components: (1) a fishery data set involving time-series ($t = 1,2,\dots,T$) of total catch, an exploitable biomass index time-series, and proportions-at-age in the fishery catch and research vessel (RV) survey; (2) a stock assessment model that uses the simulated data to estimate historical biomass, recruitment, natural mortality, selectivity, and stock-recruitment parameters up to time step $t$ (AM.1), as well as any values required by harvest control rules [@cox2013roles]; and (3) a harvest control rule for computing a catch limit based on stock assessment results.  The sections below describe how each of these components is implemented in the simulations.  
+
+###  Simulated stock assessment data
+Although the operating model simulates the data used in fishery stock assessments, the MP controls the types, frequency, and precision of the simulated data because these are typically under management control. Annual estimates of cod spawning biomass are required by all management procedures. For this study, we generated unbiased, absolute values of spawning biomass as the biomass index data (OM2.23). The coefficients of variation (CVs) of these estimates were constant over time and set to values estimated in the 2015 stock assessment (see above for standard errors). Fishery and survey age-composition data required for the simulated SCA stock assessments (defined below) are generated annually from OM2.24-2.26. 
+
+###  Catch-at-age stock assessment models
+The statistical catch-at-age assessment model (AM; Table 4) used in the simulated management procedures is defined in AD Model builder and differs slightly from the age-structured operating model [@fournier2012ad]. The four main differences are that (i) recruitment in the AM is based on a Beverton-Holt stock-recruit relationship with uncorrelated process errors (AM.6 and Table 6 eq L.4), (ii) catch in the AM is taken assuming a discrete fishery (i.e. a single fleet) occurring at the beginning of the year (AM.7) instead of continuously as it is in the operating model, (iii) weight-at-age is assumed constant in the AM, and (iv) the AM assumes only a single time-varying $M_t$ value that applies to all ages.  Equations AM.1-AM.8 show how the relevant calculations in the AM are affected by these differences. The AM estimator makes use of data from the OM including catch, biomass survey indices, and proportions-at-age in the catch and survey. Operating model schedules of maturity-at-age are assumed constant and known in the AM and are therefore part of the assessment input data. Recruitment deviations are only estimated for years $t = 2,3,...,T - a_{50}^{mat}$ because there is little information in age-composition data about more recent recruitment.  We use age-at-50% maturity instead of age-at-50% selectivity to bound the size of the recruitment deviation vector because the former is a known input whereas the latter is based on estimated model parameters and therefore violates AD Model Builder rules of automatic differentiation (i.e., the length of a parameter vector cannot be a function of an estimated parameter). Natural mortality rate is estimated in the AM as a random walk to allow for non-stationary natural mortality. In all cases, we use a somewhat informative prior on the initial $M_t$ value at t = 1.
+
+Maximum likelihood estimates of error variances are computed analytically in the AM by conditioning on the leading parameters. For this study, we assumed that RV survey catchability $q = 1$ in the AM for two reasons. First, preliminary tests of the AM estimator assuming $q = 1$ closely matched actual stock assessments that estimated $q$ (which was close to 1 anyway); and second, assuming $q = 1$ gives a more stable AM estimator in closed-loop simulations.
+
+Table 6 provides the likelihood components and calculations involved in the negative-log-posterior distribution function ($G$; L.10). The AM uses an errors-in-variables (EIV) maximum likelihood formulation for modeling the combined biomass index and process error likelihood ($l_{IR}$; L.1-L.6). The EIV approach reduces the number of estimated parameters by assuming a total error variance ($\kappa^2$) that comprises observation error ($\tau_I^2$) and age-1 recruitment process error ($\sigma_R^2$) components, i.e., $\kappa^2 = \sigma_R^2 + \tau_I^2$. Assuming that the observation error proportion of this total is known ($\rho_{CAA} = 0.1$), the individual variance estimates are $\tau_I^2 = \rho_{CAA}\kappa^2$  and $\sigma_R^2 = (1 - \rho_{CAA})\kappa^2$, where the estimate of the total variance $\kappa^2$ is given by L.5 [@schnute1995influence]. Our justification for the EIV likelihood is similar to our $q=1$ assumption; that is, it is generally faster to simulate and produces results similar to more complex and time-consuming estimation methods.
+
+We use a robust normal likelihood [@fournier1998multifan] for the age-proportion data (L.7) assuming sample sizes are all equal to an effective size $n = 50$. The total negative log-posterior distribution function includes an informative Beta prior distribution on the stock-recruitment steepness parameter ($h$; L.8) and an informative $N(0.2,0.05^2)$ prior distribution on the natural mortality rate at $t=1$. The shape parameters $(\beta_1,\beta_2)$ of the Beta distribution (L.8) for steepness are derived via moment matching to a prior mean ($\mu_h = 0.7$) and standard deviation ($\sigma_h = 0.08$) given the constraint $0.2 < h < 1$. These informative prior distributions improve stability of the AM parameter estimation procedure, but otherwise have little impacts because simulated harvest control rules do not use equilibrium yield-per-recruit estimates. 
+
+###  Harvest control rule
+We examined a four management procedures that differed by the harvest control decision rule, with two variable $F$ rules and two constant $F$ rules. The first variable $F$ procedure is a "hockey-stick" rule  with a constant target fishing mortality rate of $F_{0.1} = 0.18/yr$ [@cadigan2015state]. This rule, labeled F0.1, uses the estimated present state of the stock (i.e., $t = T$) from the AM and a projected expected biomass to determine a catch limit $Q_{T+1}$ for the upcoming year using a 2-stage precautionary harvest control rule (Figure 1):
+\begin{equation}
+\hat{F}_{T+1} = \left\{ \begin{array}{ll}
+                  F_{lim} \frac{\hat{B}_{T+1}}{B_{lim}} & \hat{B}_{T+1} < B_{lim}, \\
+                  F_{lim} + (F_{0.1} - F_{lim}) \frac{\hat{B}_{T+1} - B_{lim}}{B_{lim}} & B_{lim} \leq \hat{B}_{T+1} < 2 B_{lim}, \\
+                  F_{0.1} & \hat{B}_{T+1} \geq 2 B_{lim}. 
+                  \end{array} \right.
+\end{equation}
+\noindent This harvest rule is defined to match the decision process used in the northern cod fishery, and modifies the harvest strategy that Fisheries and Oceans, Canada, suggests to comply with the precautionary approach to fisheries management [@DFO2006A-Harvest-Strat]. The modification is intended to re-establish a fishery as the stock recovers from historically low levels, and adds the secondary ramp from 0 to the lower reference harvest rate ($F_{lim} = 0.05$) for the critical zone $0 \leq \hat{B_T} \leq B_{lim}$. To define the critical zone, we use the limit reference biomass $B_{lim} = 885kt$, which is the average biomass during the 1980s as estimated by NCAM. The upper stock reference, which defines the upper limit of the cautionary zone, is defined as twice the limit reference point, $2\cdot B_{lim} =  1770kt$. At the upper stock reference, the control rule sets the target fishing mortality rate as $F_{0.1} = 0.18$, which is scaled linearly from $F_{lim}$ within the cautionary zone.
+
+The second variable $F$ rule modifies the F0.1 MP by replacing the secondary ramp in the critical zone with a stepped, fixed TAC rule. Under the stepped TAC rule (steppedTAC), the annual quota is limited by the following rules: [***Since this is just research, I changed the step function by shifting everything to the right by one step, i.e. 0TAC in 0-25\%$B_{lim}$, needs new plot***]
+
+  1. $Q_{T+1} = 0$ when $B_{T+1}$ is 0\%-25\% of $B_{lim}$,
+  2. $Q_{T+1} = 5,000t$ when $B_{T+1}$ is 25.1\%-50\% of $B_{lim}$,
+  3. $Q_{T+1} = 10,000$ when $B_{T+1}$ when SSB is 50.1\%-75\% of $B_{lim}$,
+  4.  $Q_{T+1} = 15,000$ when $B_{T+1}$ when SSB is 75.1\%-100\% of $B_{lim}$.
+
+This modification is intended increase the conservation performance of the F0.1 rule by reducing fishing pressure inside the critical zone, while at the same time reducing the annual variation in yield while the stock is still very low. Furthermore, the point at which fishing is reduced to zero is above $B_{T+1} = 0$, which is more precautionary than F0.1. This reduction in AAV would likely increase the stability of cod markets for industry stakeholders, allowing for a more managed, increase in precautionary nature will likely improve conservation performance. [***We should probably indicate that GEAC asked for something like this?***]
+
+Finally, we describe the two constant F management procedures. The first, conF, uses the lower reference fishing mortality rate $F_{lim}= 0.05$. The second, F_SAR, uses a fishing mortality rate $F= 0.122$ estimated from the recent 2014 TAC of 35,000t set by the recent SAR document [***get citation, or just switch this to constant F0.1***], with reference exploitable biomass assumed to be 538,000 (Personal Communication, Kris Vascotto).
+
+Once the quota is determined by the harvest control rule, the operating model determines the effective fishing mortality rate $F_{T+1}$. This is found by numerically solving the Baranov catch equation,
+\begin{equation}
+Q_{T+1} = \frac{\hat{F}_{T+1}}{\hat{M}_{T} + \hat{F}_{T+1}} \hat{B}_{T+1} \left(1 - e^{-(\hat{F}_{T+1} + \hat{M}_{T}) } \right),
+\end{equation}
+\noindent where $\hat{B}_{T+1}$ is a 1-year-ahead stock assessment model projection of the exploitable biomass for the coming year and $\hat{M}_T$ is the current estimate of natural mortality from the assessment model. This projection is based on deterministic age-1 recruitments from the estimated spawner-recruit relationship for years $T - a_{50}^{mat}$ to $T+1$ because recruitment is not well-estimated in more recent years (see above). 
+
+Annual catch taken from the operating model population is set equal to the TAC obtained from the target fishing mortality; that is, we assume that all the TAC is landed (no unreported or at-sea discarding) and the fisheries close when the TAC is reached. Some of these assumptions are not realistic for 2J3KL cod, for example, there is probably considerable discarding due to quota restrictions as the stock recovers (***size problems?? - citation***). 
+
+###  Performance measures
+We use five common metrics to summarise conservation and yield performance of simulated management procedures. 
+Conservation performance was measured using the median proportion of simulations in which the spawning biomass drops below the operating model $B_lim$, i.e.,
+
+i. the probability ($p_{t,crit}$) of spawning stock biomass being within Critical zone ($B_t < B_{lim}$) at the end of year $t$  ($t = 2017, 2019, 2024$).
+
+Yield performance of each MP is summarized via: 
+    
+ii. the median average annual catch ($\bar{C_t}$) during the period $[2015,t]$;
+iii.  average annual variability of yield (AAV):
+\begin{equation}
+AAV = \frac{\sum_{t=1}^T |Q_t - Q_{t-1}| }{\sum_{t = 1}^T Q_t},
+\end{equation}
+\noindent where Qt is the simulated quota obtained from applying a given MP in year $t$.
+
+
+The final 2 metrics provide information about stock rebuilding during the projection period:
+
+iv. first year in which $B_{lim}$ is reached with probability p: $T_{lim}^{p}$;
+v.  first year in which $USR = 2B_{lim}$ is reached with with probability p: $T_{USR}^{p}$.
+
+These are estimated as the first time $T_{ref}^{p}$ that the $(100 - p)$th percentile of all projected $B_t$ trajectories passes the reference levels $B_{lim}$ or $USR = 2B_{lim}$, for $p = 50, 75, 95$.
+
+
+# Results
+
+## Simulation model dynamics
+The operating model (OM) agreed reasonably well with the historical spawning biomass estimates from NCAM (Figure 3), which is not surprising given that the OM is initialized with NCAM abundances, natural-mortality-at-age, fishing mortality-at-age, as well as changes in weight and maturity at age over time. Figure 3 also shows the alternative assessment estimates of biomass, F, and M from applying the management procedure assessment model (i.e., AM, Tables 5 and 6) to the actual 2J3KL northern cod data. Biomass estimates from this model also agree reasonably well with NCAM in the 1980s and in the period following the collapse (Table 7). Although the AM also estimates high M leading up to the collapse, it also estimates much higher F and lower M during the collapse compared to NCAM. This probably occurs because of the AM assumption that survey catchability $q = 1$, while NCAM allows temporal variation in survey $q$. 
+
+Simulation envelopes for projected $M$ values differ between the $M$ scenarios, as expected, but also between recruitment scenarios when $M$ was density dependent (Figure 4). The conM scenario M values occur in a tight envelope centered on the historical mean (Figure 4 – conM), while the two pulse M scenarios show either one period of pulse M events for the 40-year frequency (pM40) or 4 periods (one sustained for 3 years) for the 20-year frequency (pM20). The biomass-dependent natural mortality pulses (pM20lim) behave differently under the different recruitment scenarios. In the low recruitment scenarios (pM20lim_$.16\bar{R}$) the biomass stays below $B_{lim}$ more often, leading to aggregate behaviour similar to the 20-year frequency scenario (pM20). In the high recruitment scenario (pM20lim_.5$\bar{R}$) pulses occur in the short term because biomass is currently below $B_{lim}$, and but less often near the end of the time series, resulting in a final pulse that is sustained for only one year.
+
+Recruitment scenarios behave fairly consistently, in the absence of a stock-recruitment relationship (Figure 5). The .16$\bar{R}$ scenario R values occur in a tight envelope around the recent (2005 – 2014) average age-1 recruitment for the projection period. The $inc\bar{R}$ scenario envelope widens as average age-1 recruitment trends towards 50% of the 1980s mean. The $.5\bar{R}$ scenario values occur in a wide, uniform envelope the same width as the final year of the $inc\bar{R}$ scenario. Recruitment values are generated by modifying the average R value with log normal deviations, which act proportionally and result in wider envelopes for larger average recruitments.
+
+We selected four example replicates to illustrate the simulated dynamics of the conM 3 different pM operating model scenarios for average R recruitment in Figures 6 through 9. Only replicates for the .5R recruitment scenario are shown, as the behaviour of 1.5R scenarios is the same but with most quantities inflated by a factor of 3. Results are summarized using retrospective patterns of AM performance, the realized spawning biomass, catch, and fishing mortality outcomes from the closed-loop simulations. Results are presented only for the F0.1 management procedure, as the behaviour of the other MPs all had similar dynamics in each replicate.
+
+The conM operating model scenario is the most optimistic natural mortality scenario. Simulated spawning stock biomass (SSB) increases slowly on average during the projection period (Figure 6a), with occasional spikes followed by declines occurring 3 years after low recruitment events due to the maturity lag (Figure 6d). The AM shows an interesting retrospective pattern, often underestimating SSB while the stock is increasing, but overestimating SSB during years of steep decline corresponding to low R events (Figure 6a, blue lines). Overestimates of biomass during years of steep decline causes spikes in realized fishing mortality resembling fishing mortality in 2003, much lower than peak historic levels.
+
+The ‘pulse’ simulation scenarios represent the case of periodic (every 40 or 20 years) extreme 1-year natural mortality events, after which M returns to the historical average. In these scenarios, the frequency of high M events determines their relative impact – more frequent extreme events (e.g. pM20, pM20lim) maintain lower average spawning biomass, and thus realize a smaller stock decline than less extreme events (e.g. pM40) in which spawning biomass is allowed to build to high levels (compare Figures 7a and 8a). Because of this, the pulse20 scenarios are similar to the NCAM estimated M history, with periodic increases and decreases in SSB (Figures 7a, 9a). In addition, recruitment affects the SSB trajectory, with low recruitment events contributing to stock declines, as in the conM scenario. Occasionally, recruitment will drop 3 years before the mortality pulse, combining to reduce the SSB even further than the high M events. Due to these combined forces of recruitment and mortality, the retrospective pattern in assessed stock biomass creates a lag leading to large spikes in realized fishing mortality exceeding historic levels, resulting in overfishing following precipitous declines in SSB (Figures 7c, 8c, 9c). However, with less frequent pulses recovery from these events is rapid due to the lower average value of M over the projected period, as well as the lack of autocorrelation in the mortality time series (compare Figures 7a, 8a).
+
+Generally, recruitment and mortality can independently, and in combination, create precipitous declines in spawning stock biomass, leading to large assessment errors and spikes in realised fishing mortality. This phenomenon is observable in the single replicate retrospective analyses where small pulses of fishing mortality occur 3 years after a low recruitment event in the constant M scenario (Figure 6a), and larger pulses in the pulse M scenarios when low recruitment and high mortality events combine (Figures 7a, 8a and 9a). The same phenomenon is observable in the aggregate fishing mortality envelope plots, where the pulse M scenarios have large spikes in the aggregate performance, with higher spikes for the 1.5R scenarios (Figure 10).
+
+In spite of the complex nature of the dynamical relationship between M and R, the envelope plots of biomass depletion as a fraction of "$B_{lim}$"  and catch show similar behaviour for each mortality scenario (Compare Figures 11, 12, 13, 14 for .5R [***Surely we can reduce the number of figures here...***]). For lower average M scenarios (conM, pM40) the distributions in the envelopes are somewhat more concentrated, while the higher average M scenarios (pM20, pM20lim) have more variability. Comparing the same mortality scenarios between 1.5R and .5R recruitment scenarios shows the same general behaviour, but inflated by a factor of 3 as in the single replicates.
+
+
+##  Evaluation of management procedures
+
+The "No-fishing" scenarios illustrate the average dynamics of the simulated population across the range of natural mortality and recruitment scenarios we tested (Tables 8 and 9). This provides a benchmark for the remaining management procedures within each scenario.
+
+- Rank MPs according to some metrics that we used
+- Show depletion scaled by NoFish - dynamic B0
+
+The conM mortality scenario is the most conservative “best case” future scenario, resulting in the highest average catch for both recruitment scenarios and best times to $B_{lim}$ and $2 B_{lim}$ . The pM scenarios are the least conservative, resulting in a lower average catch and higher probabilities of being below $B_{lim}$ , even in the absence of fishing (Tables 8 and 9). The introduction of harvesting moves the system to a less conservative state in all scenarios.
+
+The two variable F MPs performed largely the same across scenarios. Differences were primarily observed in the 2 yield performance criteria, average catch and average annual variation (AAV) (Tables 8 and 9). In the short term, maxTAC realises higher average catch than noMaxTAC due to the TAC ceiling exceeding the HCR at low abundance (Figure 2), while they are both similar in the long term. AAV differed the most when mortality rates were higher on average, with maxTAC realising lower AAV than noMaxTAC in the pulse M scenarios. The maxTAC MP was designed to reduce AAV while SSB is at low levels, and this is evident in the simulation results. Note however, that when explored for the full set of simulations the aggregate difference in catch and depletion between the MPs is minor (Figures 11, 12, 13, 14).
+
+[***We should look at Cleveland plots over scenarios, scale out by NoFish for dep/catch plots to have a scenario independent performance***]
+
+The two constant F MPs performed similarly in dynamics. They both tracked spawning stock biomass with stability, and the AAV was the lowest for both MPs in all scenarios. The main difference between the two was in average catch, with F_SAR consistently realising about 200% of the conF average catch over 3, 5 and 10 years across scenarios. Due to this, the probability of leaving the critical zone, and the time it took to do so, were higher for F_SAR than conF.
+The limit reference point "$B_{lim}$" = ("SSB" ) ̅_(1983:1989) is used to define the upper limit of the critical stock status zone at 885Kt according to NCAM estimates (Table 7). **The main differences in performance of MPs reaching the limit reference point ( $T_{lim}^{50}$⁡ , $T_{lim}^{75}$, $T_{lim}^{95}$) or upper stock reference point ($T_{USR}^{50}$, $T_{USR}^{75}$, $T_{USR}^{95}$) were between natural mortality scenarios rather than between MPs (Tables 8 and 9)**. Scenarios with lower average natural mortality were found to reach $B_{lim}$  more quickly, sometimes within 5 years of beginning the management procedure. MPs in the 1.5R scenarios were the only cases where the USR was reached with any probability during the projection period, caused by the higher average recruitment.
+
+
+#  Discussion
+
+In this paper, we presented a closed-loop simulation framework for evaluating candidate harvest strategies for future management of 2J3KL (northern) cod. This simulation framework uses operating and assessment models that differ in complexity from the recent assessment of northern cod because of the intensive and repetitive nature of closed-loop simulation [@cadigan2015state]. Nevertheless, the simulations effectively demonstrate some of the key challenges in designing rebuilding strategies for stocks that experience time-varying demographic parameters related to natural mortality and recruitment. In cases where time-varying mortality and recruitment matched recent historical dynamics, even conservative fishery policies derived under equilibrium assumptions fail to actually achieve conservative outcomes. 
+
+We ran 60 simulations, combining 5 management procedures and 12 scenarios, which were combinations of 4 mortality scenarios and 3 recruitment scenarios. We found natural mortality and recruitment of 23JKL cod were the major contributors to the simulation model dynamics and the management outcomes as measured by the performance metrics we defiend. These two main drivers also combined in interesting ways, giving rise to large assessment errors and spikes in realised fishing mortality in projected scenarios.
+
+Recent stock assessments [@cadigan2015state] estimate large variability in recruitment and natural mortality processes in 2J3KL cod, although the models are largely descriptive and do not offer hypotheses to explain such behaviour. As a result, our operating model projections of recruitment and natural mortality dynamics mainly involve density-independent random processes. The exception, p20Lim, represented the hypothesis that small spawning stocks are more vulnerable to stochastic events affecting mortality. 
+
+The importance of natural mortality and recruitment is highlighted by the $T_{lim}$⁡ and $T_{USR}$  metrics, which measure the time that $B_{lim}$  and $2B_{lim}$, respectively, are first exceeded in 50%, 75% and 95% of simulation replicates. Small increases in the probability of high mortality significantly slow the pace that 23JKL cod reaches $B_{lim}$ , with less than half of the management procedures in .5R scenarios reaching $B_{lim}$ with 75% probability. However, the same scenarios with a 3-fold increase in average recruitment show a marked improvement in their performance, reaching the USR with 50% probability within 10 years in all cases.
+
+On its own, the relative frequency of high impact M events has a counter-intuitive effect on spawning stock biomass. Higher frequency M events in the pM20 and pM20lim scenarios reduce the capacity of the stock to increase to high levels, reducing the relative magnitude of the assessment error during declines, producing smaller spikes in fishing mortality and less catastrophic collapses. In contrast, the lower frequency in pM40 events allow biomass to reach high projected SSB, as well as the largest magnitude collapses.
+
+
+##  Limitations
+The suite of operating models examined here is not exhaustive with respect to potential future natural mortality, recruitment, and fishing scenarios. Clearly, we lack mechanistic understanding of the relationships among natural mortality, fishing mortality, and stock biomass. With the exception of the biomass-dependent 20-year pulse $M$, we assume that recruitment and natural mortality are density-independent processes. While it is possible that recruitment and M may be density-independent over the short-term, such as our 20-year projection period, this is probably not true over multi-decadal time scales.
+
+Although we included a diverse set of operating model scenarios and incorporated realistic assessment model errors in the simulated management procedures, there are some places where the model implementation could be adjusted. We did not account for random implementation uncertainty, or stochastic deviations between the intended TAC and the actual catch, and instead we assumed that the TAC was the entire amount of removals from the stock. However, there is potential in the fishery for unreported catch. For instance, subsistence fishing and at-sea-discarding of smaller pieces (high-grading) may combine in some years to increase fishing mortality to high levels, and the associated risks should be considered.
+
+To simplify dynamics in the projections we used a parametric selectivity model. This model was fit to the estimated F series from the NCAM assessment of the historical period, and therefore represents an average selectivity model over that period. During this period, there were changes in fishing gear when fishing vessels of different sizes targeted the stock, accompanied by a switch in fishing practices, as well as a large scale collapse of the resource. These changes in fishery dynamics imply that the average selectivity model we used in the projections is likely biased from the current fishing practices.
+
+## Conclusion
+
+NOT PRECAUTIONARY, as the main driver of stock recovery to empirical Blim is the M and R dynamics, not the MP. ***Fill this in more when the reruns are complete***
+
+# References
+
